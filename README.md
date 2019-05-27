@@ -1,2 +1,2 @@
 # IgorMacro
-Igor Macro for analysis of ARPES measurement data (Scienta Omicron, SES)
+Igor Macro for analysis of ARPES measurement data (Scienta Omicron, SES) and so on
