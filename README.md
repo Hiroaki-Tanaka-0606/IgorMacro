@@ -29,7 +29,7 @@ Therefore magnetization ***mag*** in unit of emu is equal to ***mag***/(mass/fw 
 - **e** elementary charge
 - **c** speed of light, e/c=1.6022\*10<sup>-20</sup> [esu cm<sup>-1</sup> s]
 - **hbar** Dirac constant 1.0546\*10<sup>-27</sup> [g cm<sup>2</sup> s<sup>-1</sup>]
-- **m** mass of electron 9.1094\*10<sup>-28</sup> [g]
+- **me** mass of electron 9.1094\*10<sup>-28</sup> [g]
 
 ### usage
 ```
