@@ -1,4 +1,4 @@
-#pragma rtGlobals=3		// Use modern global access method and strict wave access.
+ #pragma rtGlobals=3		// Use modern global access method and strict wave access.
 
 //composite3D: composite 3D cube from slices of 2D data
 //Usage

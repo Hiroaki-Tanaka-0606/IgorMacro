@@ -172,6 +172,8 @@ Function AuEfCorrect2D(inputWave, efWave, outputWave)
 		Endif
 	Endfor
 	
+	Print "minShift: "+num2str(minShift)+" maxShift: "+num2str(maxShift)
+	
 	Variable newSize1=size1-minShift+maxShift
 	Make/O/D/N=(newSize1,size2) $outputWave
 	Wave/D output=$outputWave

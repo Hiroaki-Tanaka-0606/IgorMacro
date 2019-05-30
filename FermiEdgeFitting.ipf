@@ -115,7 +115,7 @@ Function EfTrialFunc(param, ywave, xwave): FitFunc
 	Variable delta=DimDelta(ywave,0)
 	Variable size=DimSize(ywave,0)
 	Variable offset=DimOffset(ywave,0)
-	Variable beta=11604.86/conf[6] //1/k_B T
+	Variable beta=11604.52/conf[6] //1/k_B T
 	
 	param[5]=abs(param[5])
 	Variable dE1=conf[2]
