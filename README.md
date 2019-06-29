@@ -8,7 +8,7 @@ Igor Macro for analysis of ARPES measurement data (Scienta Omicron, SES) and so 
 ## 02. Advanced
 
 ## 99. Others
-- **emu_muB.ipf** rescale emu to &mu;B/f.u.
+- **emu_muB.ipf** convert emu to &mu;B/f.u.
 
 # Note
 The values of physical constants are from https://physics.nist.gov/cuu/Constants/
