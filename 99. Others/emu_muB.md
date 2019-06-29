@@ -3,7 +3,7 @@ Convert magnetization measurement data, from emu unit to &mu;B/f.u. unit
 
 ## Equation
 In cgs Gauss unit system,
-<img src="https://latex.codecogs.com/svg.latex?\inline&space;\dpi{300}&space;\fn_cm&space;\mu_B=\frac{e\hbar}{2m_ec}" alt="&mu;<sub>B</sub>=e hbar / 2 m<sub>e</sub> c">.
+<img src="https://latex.codecogs.com/svg.latex?\inline&space;\dpi{300}&space;\fn_cm&space;\mu_B=\frac{e\hbar}{2m_\text{e}c}" alt="&mu;<sub>B</sub>=e hbar / 2 m<sub>e</sub> c">.
 Therefore magnetization ***mag*<sub>emu</sub>** in unit of emu is converted to ***mag*<sub>&mu;B</sub>** by the following equation:
 
 <img src="https://latex.codecogs.com/svg.latex?\dpi{300}&space;\fn_cm&space;mag_\mathrm{\mu&space;B}=\frac{mag_\text{emu}}{\dfrac{mass}{fw}\times&space;N_\text{A}\cdot&space;\dfrac{e\hbar}{2m_\text{e}c}}" alt="**mag***/(mass/fw Na)/(e hbar/(2 me c))">, 
