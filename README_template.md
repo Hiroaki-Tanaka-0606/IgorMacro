@@ -10,4 +10,6 @@ Function_name(arguments)
 ```
 - **argument[input/output]** description
 
-***variable_in_text***
+***variable is italic*<sub>subscript is upright</sub>**
+
+https://www.codecogs.com/latex/eqneditor.php
