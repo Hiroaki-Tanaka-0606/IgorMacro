@@ -15,5 +15,7 @@ sliceNormalize(inputWave, outputWave)
 
 ## Example
 ### Before
+<img src="https://raw.githubusercontent.com/Hiroaki-Tanaka-0606/IgorMacro/master/00.%20Resources/FermiSurface_beforeNormalize.png">
 
 ### After 
+<img src="https://raw.githubusercontent.com/Hiroaki-Tanaka-0606/IgorMacro/master/00.%20Resources/FermiSurface_afterNormalize.png">
