@@ -3,11 +3,9 @@ Igor Macro for analysis of ARPES measurement data (Scienta Omicron, SES) and so 
 
 # List
 
-## For ARPES measurement 
-### 01. Fundamental
+## 01. Fundamental
 
-### 02. Advanced
-
+## 02. Advanced
 
 ## 99. Others
 - **emu_muB.ipf** rescale emu to &mu;B/f.u.
