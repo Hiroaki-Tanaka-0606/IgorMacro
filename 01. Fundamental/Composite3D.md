@@ -18,6 +18,6 @@ The function ```composite3D``` collects 2D waves named **sequence** in the folde
 ```
 composite3D(mappingWave, sequence, outputWave)
 ```
-- **mappingWave[input]** name of a ***text*** wave in which names of folders are listed. Don't forget to set **offset** and **delta** of the wave (which are inherited by output wave).
+- **mappingWave[input]** name of a ***text*** wave in which names of folders are listed. Don't forget to set **start** and **delta** of the wave (which are inherited by output wave).
 - **sequence[input]** name of 2D waves. All 2D waves should have the same name. In case of the measurement by SES, wave name is the same as sequence name, so 2D waves for composition of 3D cube always have the same name.
 - **outputWave[output]** name of output wave
