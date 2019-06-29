@@ -1,15 +1,14 @@
-# (file name).ipf
-short description
+# SliceNormalize.ipf
+Modify intensity of each slice so that all slices have the same net intensity
 
 ## Process
-## Equation
+The intensity of signal depends on matrix element of photoemission process and condition of light source, so sometimes intensity difference between slices makes image of constant-energy surface difficult to understand. Normalization of intensity may make the image more comprehensive.
+
+Here, the third index of input wave (3D) is used as an index of "slice." Intensity of slice is the sum of intensity for the first and second index. Then intensity is normalized by division　so that every intensity of slice is the same as the average of intensity before normalization.
 
 ## Usage
 ```
-Function_name(arguments)
+sliceNormalize(inputWave, outputWave)
 ```
-- **argument[input/output]** description
-
-- ***variable in equation is italic*<sub>subscript is upright</sub>**
-- **argument in function is bold**
-- equation https://www.codecogs.com/latex/eqneditor.php (svg, computer modern)
+- **inputWave[input]** name of input wave. Be careful to make 3D cube in which the third index corresponds to slice index. Function ```composite3D``` can make such 3D wave.
+- **outputWave[output]** name of output wave
