@@ -17,3 +17,10 @@ BackGroundFilter2D(inputWave, aboveEf, outputWave)
 - **outputWave[output]** wave name of output The order of index is the same as **inputWave**.
 
 Through these processes, **inputWave** is not changed.
+
+## Example
+### Before
+<img src="https://raw.githubusercontent.com/Hiroaki-Tanaka-0606/IgorMacro/master/00.%20Resources/Au_poly.png">
+
+### After
+<img src="https://raw.githubusercontent.com/Hiroaki-Tanaka-0606/IgorMacro/master/00.%20Resources/Au_poly_filtered.png">
