@@ -42,3 +42,4 @@ EfFitting(waveName, temperature, holdParams, displayFlag)
 Output of ```EfFitting```function is the fitting parameters, which are stored in **Parameters** wave.
 
 ## Example
+<img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/Au_edge_fitting.png" width=500>
