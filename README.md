@@ -7,6 +7,7 @@ Igor Macro for analysis of ARPES measurement data (Scienta Omicron, SES) and so 
 - **BackgroundFilter.ipf** Remove constant background noise
 - **Composite3D.ipf** Make 3D cube from 2D slices
 - **SliceNormaluze.ipf** Modify intensity of each slice
+- **FermiEdgeFitting.ipf** Fit intensity by Fermi distribution function
 
 ## 02. Advanced
 
