@@ -91,7 +91,7 @@ Function Au_2goki(inputWave,temp)
 	NewDataFolder/O root:Au
 	Wave/D input=$inputWave
 	String duplicateInput="root:Au:Au"
-	Duplicate/O input,$duplicateInput
+	Duplicate/O input, $duplicateInput
 	
 	cd root:
 	String/G bgWave="root:Au:Au_bg"
@@ -101,7 +101,7 @@ Function Au_2goki(inputWave,temp)
 	Variable/G temperature=temp
 	Variable/G aboveEf=2.67
 
-	AuAnalyze(duplicateInput,temperature,bgWave,efWave,fwhmWave)
+	AuAnalyze(duplicateInput,temperature,bgWave,efWave,fwhmWave,"000000")
 	AuIntensity(duplicateInput,bgWave,intensityWave)
 	
 	cd currentDataFolder

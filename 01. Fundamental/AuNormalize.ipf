@@ -414,9 +414,11 @@ End
 //bgWave: wave name of background data (output)
 //efWave: wave name of fermi energy data (output)
 //fwhmWave: wave name of FWHM of fermi edge fitting (output)
+//holdParams: 6-long string, which determines whether param[i] is hold constant ("1") or not ("0")
+//-> see "FermiEdgeFitting.ipf"
 
-Function AuAnalyze(inputWave, temperature, bgWave, efWave, fwhmWave)
-	String inputWave, bgWave, efWave, fwhmWave
+Function AuAnalyze(inputWave, temperature, bgWave, efWave, fwhmWave, holdParams)
+	String inputWave, bgWave, efWave, fwhmWave, holdParams
 	Variable temperature
 	
 	Print "[AuAnalyze]"
@@ -457,7 +459,7 @@ Function AuAnalyze(inputWave, temperature, bgWave, efWave, fwhmWave)
 	SetScale/P x, offset2, delta2, fwhm
 
 	//Config
-	Make/O/D/N=8 $"Config"
+	Make/O/D/N=4 $"Config"
 	Wave/D conf=$"Config"
 	conf[]=0
 
@@ -472,7 +474,7 @@ Function AuAnalyze(inputWave, temperature, bgWave, efWave, fwhmWave)
 	Variable i
 	For(i=0;i<size2;i+=1)
 		slice[]=input[p][i]
-		EfFitting("tempSlice",temperature,0)
+		EfFitting("tempSlice",temperature,holdParams,0)
 		bg[i]=param[2]
 		ef[i]=param[4]
 		fwhm[i]=param[5]
