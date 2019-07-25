@@ -19,12 +19,12 @@ where ***p<sub>0</sub>*** - ***p<sub>5</sub>*** are fitting parameters, ***k<sub
     - Fourth row (**conf[3]**): temperature. It is set from the second argument of the function **EfFitting**.
 1. When **Config** wave doesn't exist, make **Config** wave and the default values are set.
 1. Set initial value of the fitting parameters from the result of ```EdgeStats``` function. Fitting parameters are stored in **Parameters** wave.
-    - First row (**param[0]**, ***p_0***): scale of intensity
-    - Second row (**param[1]**, ***p_1***): slope of intensity (not set by ```EdgeStats```, the initial value is ***zero***)
-    - Third row (**param[2]**, ***p_2***): constant background
-    - Fourth row (**param[3]**, ***p_3***): slope of background (not set by ```EdgeStats```, the initial value is ***zero***)
-    - Fifth row (**param[4]**, ***p_4***): position of Fermi energy [eV]
-    - Sixth row (**param[5]**, ***p_5***): FWHM of fructuation [eV]
+    - First row (**param[0]**, ***p<sub>0</sub>***): scale of intensity
+    - Second row (**param[1]**, ***p<sub>1</sub>***): slope of intensity (not set by ```EdgeStats```, the initial value is ***zero***)
+    - Third row (**param[2]**, ***p<sub>2</sub>***): constant background
+    - Fourth row (**param[3]**, ***p<sub>3</sub>***): slope of background (not set by ```EdgeStats```, the initial value is ***zero***)
+    - Fifth row (**param[4]**, ***p<sub>4</sub>***): position of Fermi energy [eV]
+    - Sixth row (**param[5]**, ***p<sub>5</sub>***): FWHM of fructuation [eV]
 
 1. When ```EdgeStats``` function couldn't find any edge successfully, **warning** or **error** is printed. In addition, when the **error** is printed, fitting is aborted.
 1. When ```EdgeStats``` function could find an edge successfully, try fitting.
@@ -42,3 +42,4 @@ EfFitting(waveName, temperature, holdParams, displayFlag)
 Output of ```EfFitting```function is the fitting parameters, which are stored in **Parameters** wave.
 
 ## Example
+<img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/Au_edge_fitting.png" width=500>
