@@ -25,3 +25,10 @@ emu_muB(waveName, waveName2, mass, formulaWeight)
 - **waveName2[output]** wave name of rescaled data
 - **mass[input]** weight of the sample [g]
 - **formulaWeight[input]** formula weight of the sample [g mol<sup>-1</sup>]
+
+```
+subtractBackground(inputWave, backgroundWave, outputWave)
+```
+- **inputWave[input]** wave name of measurement data
+- **backgroundWave[input]** wave name of background data. The size of **inputWave** and **backgroundWave** must be the same.
+- **outputWave[output]** wave name of output (=measurement-background) data
