@@ -37,7 +37,7 @@ EfFitting(waveName, temperature, holdParams, displayFlag)
 - **waveName[input]** name of the input wave
 - **temperature[input]** measurement temperature
 - **holdParams[input]** 6-long string determing whether fitting parameters are hold constant or not. When the i-th letter of **holdParams** is "1", ***p<sub>i</sub>*** is hold constant and when the letter is "0", it is changed by fitting procedure. Parameters other than ***p<sub>1</sub>*** and ***p<sub>3</sub>*** are estimated in initialization by ```EdgeStats```, so holding these parameters constant is not reasonable.
-- **displayFlag[input]** when **displayFlag** is **1** (not **"1"**), some information and fitting result is presented.
+- **displayFlag[input]** when **displayFlag** is <strong>1</strong> (not **"1"**), some information and fitting result is presented.
 
 Output of ```EfFitting```function is the fitting parameters, which are stored in **Parameters** wave.
 
