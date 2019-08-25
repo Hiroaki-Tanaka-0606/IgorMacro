@@ -64,9 +64,9 @@ Fermi energy correction process is the following:
 
 1. Calculate the average of fermi energy.
 1. Calculate the index shift of each column by the following equation, where **&Delta;E** is the data pitch of energy row:
-<p><img src="https://latex.codecogs.com/svg.latex?\fn_cm&space;\texttt{shift[j]}=\texttt{round}\left(&space;\frac{E_\text{F,average}-\texttt{EF[j]}}{\Delta&space;\texttt{E}}\right&space;)"></p>
+    <p><img src="https://latex.codecogs.com/svg.latex?\fn_cm&space;\texttt{shift[j]}=\texttt{round}\left(&space;\frac{E_\text{F,average}-\texttt{EF[j]}}{\Delta&space;\texttt{E}}\right&space;)"></p>
 1. Set the offset (the energy of the 0-th row) by the following equation.
-<p><img src="https://latex.codecogs.com/svg.latex?\fn_cm&space;\texttt{offset}_\text{new}=\texttt{offset}_\text{old}-E_\text{F,average}&plus;\min_j(\texttt{shift[j]})"></p>
+    <p><img src="https://latex.codecogs.com/svg.latex?\fn_cm&space;\texttt{offset}_\text{new}=\texttt{offset}_\text{old}-E_\text{F,average}&plus;\min_j(\texttt{shift[j]})"></p>
 1. Shift the each column by **shift[j]-min(shift[j])**.
 
 The rule of **inputWave** is the same as ```AuNormalize3D``` and ```AuNormalize2D```.
