@@ -70,3 +70,16 @@ Fermi energy correction process is the following:
 1. Shift the each column by **shift[j]-min(shift[j])**.
 
 The rule of **inputWave** is the same as ```AuNormalize3D``` and ```AuNormalize2D```.
+
+## Example
+### Au Fermi energy
+<img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/Au_ef.png" width=400>
+
+### Au Intensity spectrum
+<img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/Au_intensity.png" width=400>
+
+### Before normalization
+<img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/ARPES_beforeNormalize.png" width=400>
+
+### After normalization
+<img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/ARPES_afterNormalize.png" width=400>
