@@ -4,6 +4,7 @@
 #include "BackGroundFilter"
 #include "SliceNormalize"
 #include "Composite3D"
+#include "InvertAxes"
 
 //correct3D_2goki: correct ef & normalize 3D measurement data
 //Usage
@@ -101,7 +102,7 @@ Function Au_2goki(inputWave,temp)
 	Variable/G temperature=temp
 	Variable/G aboveEf=2.67
 
-	AuAnalyze(duplicateInput,temperature,bgWave,efWave,fwhmWave,"000000")
+	AuAnalyze(duplicateInput,temperature,bgWave,efWave,fwhmWave,"000100")
 	AuIntensity(duplicateInput,bgWave,intensityWave)
 	
 	cd currentDataFolder
