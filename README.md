@@ -8,6 +8,9 @@ Igor Macro for analysis of ARPES measurement data (Scienta Omicron, SES) and so 
 - **Composite3D.ipf** Make 3D cube from 2D slices
 - **SliceNormaluze.ipf** Modify intensity of each slice
 - **FermiEdgeFitting.ipf** Fit intensity by Fermi distribution function
+- **Invertaxes.ipf** Invert angle/wavevector axes of 3D cube
+- **AnNormalize.ipf** Normalize ARPES data using the intensity spectrum from Au polycrystal
+
 
 ## 02. Advanced
 
