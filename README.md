@@ -13,9 +13,10 @@ Igor Macro for analysis of ARPES measurement data (Scienta Omicron, SES) and so 
 
 
 ## 02. Advanced
+- **Analysis_2goki.ipf** A combination of macros for analyzing ARPES data from 2goki@ISSP
 
 ## 99. Others
-- **emu_muB.ipf** convert emu to &mu;B/f.u.
+- **emu_muB.ipf** Convert magnetization measurement data
 
 # Note
 The values of physical constants are from https://physics.nist.gov/cuu/Constants/
