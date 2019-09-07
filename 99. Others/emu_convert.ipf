@@ -27,6 +27,52 @@ Function emu_muB(waveName, waveName2, mass, formulaWeight)
 	momentWave2[]=momentWave[p]/(mass/formulaWeight*avogadro)/(ec*hbar/(2*me))
 End
 
+
+//emu_chi: convert [emu] to [cm^3/mol]
+//Usage
+//waveName: wave name of measurement data (input)
+//waveName2: wave name of rescaled data (output)
+//mass: weight of the sample [g]
+//formulaWeight: formula weight of the sample [g/mol]
+//magneticField: strength of the magnetic field [Oe]
+
+Function emu_chi(waveName, waveName2, mass, formulaWeight, magneticField)
+	String waveName,waveName2
+	Variable mass, formulaWeight, magneticField
+	
+	Wave/D momentWave=$waveName
+	Variable size=DimSize(momentWave,0)
+	
+	Make/O/D/N=(size) $waveName2
+	Wave/D suscepWave=$waveName2
+	
+	print("[emu_chi]")
+	
+	suscepWave[]=momentWave[p]/(magneticField*mass/formulaWeight)
+End
+
+//emu_emumol: convert [emu] to [emu/mol]
+//Usage
+//waveName: wave name of measurement data (input)
+//waveName2: wave name of rescaled data (output)
+//mass: weight of the sample [g]
+//formulaWeight: formula weight of the sample [g/mol]
+
+Function emu_emumol(waveName, waveName2, mass, formulaWeight)
+	String waveName,waveName2
+	Variable mass, formulaWeight
+	
+	Wave/D momentWave=$waveName
+	Variable size=DimSize(momentWave,0)
+	
+	Make/O/D/N=(size) $waveName2
+	Wave/D suscepWave=$waveName2
+	
+	print("[emu_emumol]")
+	
+	suscepWave[]=momentWave[p]/(mass/formulaWeight)
+End
+
 //subtractBackground: subtract background magnetic moment
 //Usage
 //inputWave: wave name of measument data (input)
