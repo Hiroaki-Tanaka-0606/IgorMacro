@@ -97,7 +97,7 @@ Function EfFitting(waveName, temperature, holdParams, displayFlag)
 	
 	Duplicate/O/R=[conf[0],conf[1]-1] input yTemp
 	
-	FuncFit/H=(holdParams)/Q/W=2 EfTrialFunc param yTemp
+	FuncFit/H=(holdParams)/Q/W=2/N EfTrialFunc param yTemp
 	//Beep
 	
 	If(displayflag==1)
