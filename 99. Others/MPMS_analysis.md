@@ -12,7 +12,7 @@ analysis_Pd(prefix, folderName, mass, minRegFit)
 - **prefix[input]** prefix of the input wave name. Wave namd of the magnetic moment data is **prefix+"moment"**, that of the magnetic field is **prefix+"field"**, that of the regfit is **prefix+"regfit"**. Magnetic field must be **first decreasing** and **second increasing**.
 - **folderName[output]** folder name in which the result is stored. The folder is created in root.
 - **mass[input]** weight of the sample[g]
-- **minRegFit** min value of regfit of accepted data. regfit is 1 when the fitting is perfect, so minRegFit should be set to around 0.9.
+- **minRegFit[input]** min value of regfit of accepted data. regfit is 1 when the fitting is perfect, so minRegFit should be set to around 0.9.
 
 This function creates the following waves and global variables in the result folder:
 - **Pd_field, Pd_moment** field, magnetic moment data regfit of which is larger than **minRegFit**.
