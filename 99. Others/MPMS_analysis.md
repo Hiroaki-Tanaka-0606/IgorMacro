@@ -18,8 +18,8 @@ analysis_Pd(prefix, folderName, mass, minRegFit, turning_point)
 This function creates the following waves and global variables in the result folder:
 - **Pd_moment_emumol** converted moment data [emu/mol] by ```emu_emumol``` function.
 - **Pd_field, Pd_moment** field [Oe], magnetic moment data [emu/mol] regfit of which is larger than **minRegFit** .
-- **Pd_field_decrease, Pd_moment_decrease** field decreasing part of **Pd_field, Pd_moment**, including the field turning point
-- **Pd_field_increase, Pd_moment_increase** field increasing part of **Pd_field, Pd_moment**, including the field turning point
+- **Pd_field_decrease, Pd_moment_decrease** field decreasing part of **Pd_field, Pd_moment**
+- **Pd_field_increase, Pd_moment_increase** field increasing part of **Pd_field, Pd_moment**
 - **Pd_fit_increase** line fitting of MH decreasing part
 - **Pd_fit_decrease** line fitting of MH increasing part
 - **Pd_slope** line slope of MH graph, including both decreasing and increasing part
