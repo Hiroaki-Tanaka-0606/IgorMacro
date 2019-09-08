@@ -35,3 +35,10 @@ correctMPMS(input_prefix, folderName, turning_point, output_prefix)
 - **output_prefix[output]** prefix of the output wave name. Wave name of corrected magnetic moment data is **prefix+"moment_increase"** and **prefix+"moment_decrease"**, and that of corrected magnetic field data is **prefix+"field_increase"** and **prefix+"field_decrease"**.
 
 In correction process, magnetic moment is multiplied by **&chi;<sub>Pd</sub>/Pd_slope**, where **&chi;<sub>Pd</sub>** is exact susceptibility of Pd. From http://www.fizika.si/magnetism/MagSusceptibilities.pdf , **&chi;<sub>Pd</sub>**=540&times;10<sup>-6</sup> [cm<sup>3</sup>/mol]. Magnetic field is shifted by **Pd_offset_decrease** or **Pd_offset_increase**.
+
+## Example data
+### Pd slope
+<p><img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/Pd_slope.png" width=600"></p>
+  
+### Pd offset
+<p><img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/Pd_offset.png" width=600"></p>
