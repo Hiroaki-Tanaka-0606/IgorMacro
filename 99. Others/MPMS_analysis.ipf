@@ -7,9 +7,7 @@
 //folderName: name of the folder in which Pd reference data is (relative path or absolute path including "root:")
 // NVAR Pd_slope, Pd_offset_decrease, Pd_offset_increase are used
 //turning_point: flag by which where the turning point is stored is determined
-// positive when the point is included in decrease part
-// negative when the point is included in increase part
-// zero when the point is included in both part  
+// rules are the same as analysis_Pd
 //output_prefix: prefix of the output wave name
 // moment: prefix+"moment_increase","moment_decrease"
 // field: prefix+"field_increase","field_decrease"
@@ -104,9 +102,13 @@ End
 //folderName: folder name in which the result is stored (created in "root")
 //mass: weight of the sample [g]
 //minRegFit: min value of regfit of accepted data
-Function analysis_Pd(prefix, folderName, mass, minRegFit)
+//turning_point: flag by which where the turning point is stored is determined
+// positive when the point is included in decrease part
+// negative when the point is included in increase part
+// zero when the point is included in both part
+Function analysis_Pd(prefix, folderName, mass, minRegFit, turning_point)
 	String prefix,folderName
-	Variable minRegFit, mass
+	Variable minRegFit, mass, turning_point
 	
 	//from https://www.sigmaaldrich.com/technical-documents/articles/biology/periodic-table-of-elements-names.html
 	Variable formulaWeight=106.42
@@ -161,15 +163,11 @@ Function analysis_Pd(prefix, folderName, mass, minRegFit)
 		endif
 	endfor
 	
-	Variable number_decrease=0 //not including the turning point
-	Variable number_increase=0 //including the turning point but not including the end point
 	Variable turning_index=-1
 	For(i=0;i<number_total-1;i+=1)
 		if(Pd_field[i]>Pd_field[i+1])
 			//decreasing
-			if(turning_index<0)
-				number_decrease+=1
-			else
+			if(turning_index>0)
 				//already turned, error
 				print "Error: field already increasing but now decreasing again"
 				abort
@@ -180,48 +178,64 @@ Function analysis_Pd(prefix, folderName, mass, minRegFit)
 				//i is turning point
 				turning_index=i
 			endif
-			number_increase+=1
 		endif
 	Endfor
+		
+	Variable decrease_end, increase_start
+	if(turning_point>=0)
+		//turning point is included in decrease part
+		Make/O/D/N=(turning_index+1) $"Pd_moment_decrease"
+		Make/O/D/N=(turning_index+1) $"Pd_field_decrease"
+		decrease_end=turning_index
+	else
+		//turning point is not included in decrease part
+		Make/O/D/N=(turning_index) $"Pd_moment_decrease"
+		Make/O/D/N=(turning_index) $"Pd_field_decrease"
+		decrease_end=turning_index-1
+	endif
 	
+	if(turning_point<=0)
+		//turning point is included in increase part
+		Make/O/D/N=(number_total-turning_index) $"Pd_moment_increase"
+		Make/O/D/N=(number_total-turning_index) $"Pd_field_increase"
+		increase_start=turning_index
+	else
+		//turning point is not included in increase part
+		Make/O/D/N=(number_total-turning_index-1) $"Pd_moment_increase"
+		Make/O/D/N=(number_total-turning_index-1) $"Pd_field_increase"
+		increase_start=turning_index+1
+	endif
 	
-	//decreasing part
-	Make/O/D/N=(number_decrease+1) $"Pd_field_decrease"
 	Wave/D Pd_field_decrease=$"Pd_field_decrease"
-	Make/O/D/N=(number_decrease+1) $"Pd_moment_decrease"
 	Wave/D Pd_moment_decrease=$"Pd_moment_decrease"
-	
-	For(i=0;i<number_decrease+1;i+=1)
+	Wave/D Pd_field_increase=$"Pd_field_increase"
+	Wave/D Pd_moment_increase=$"Pd_moment_increase"
+
+	For(i=0;i<=decrease_end;i+=1)
 		Pd_field_decrease[i]=Pd_field[i]
 		Pd_moment_decrease[i]=Pd_moment[i]
 	Endfor
 
-	//increasing part
-	Make/O/D/N=(number_increase+1) $"Pd_field_increase"
-	Wave/D Pd_field_increase=$"Pd_field_increase"
-	Make/O/D/N=(number_increase+1) $"Pd_moment_increase"
-	Wave/D Pd_moment_increase=$"Pd_moment_increase"
-	
-	For(i=0;i<number_increase+1;i+=1)
-		Pd_field_increase[i]=Pd_field[i+turning_index]
-		Pd_moment_increase[i]=Pd_moment[i+turning_index]
+	For(i=increase_start;i<number_total;i+=1)
+		Pd_field_increase[i-increase_start]=Pd_field[i]
+		Pd_moment_increase[i-increase_start]=Pd_moment[i]
 	Endfor
 	
 	//fitting
-	Wave/D coef=$"W_coef"
 	//y=coef[0]+coef[1]*x
 	CurveFit/N line Pd_moment /X=Pd_field
+	Wave/D coef=$"W_coef"
 	Variable/G Pd_slope=coef[1]
-	
+
 	CurveFit/N line Pd_moment_increase /X=Pd_field_increase
 	Variable/G Pd_offset_increase=-coef[0]/coef[1]
-	Make/O/D/N=(number_increase+1) $"Pd_fit_increase"
+	Make/O/D/N=(dimSize(Pd_field_increase,0)) $"Pd_fit_increase"
 	Wave/D Pd_fit_increase=$"Pd_fit_increase"
 	Pd_fit_increase[]=coef[0]+coef[1]*Pd_field_increase[p]
 	
 	CurveFit/N line Pd_moment_decrease /X=Pd_field_decrease
 	Variable/G Pd_offset_decrease=-coef[0]/coef[1]
-	Make/O/D/N=(number_decrease+1) $"Pd_fit_decrease"
+	Make/O/D/N=(dimSize(Pd_field_decrease,0)) $"Pd_fit_decrease"
 	Wave/D Pd_fit_decrease=$"Pd_fit_decrease"
 	Pd_fit_decrease[]=coef[0]+coef[1]*Pd_field_decrease[p]
 
