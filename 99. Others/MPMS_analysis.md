@@ -18,8 +18,8 @@ analysis_Pd(prefix, folderName, mass, minRegFit, turning_point)
 This function creates the following waves and global variables in the result folder:
 - **Pd_moment_emumol** converted moment data [emu/mol] by ```emu_emumol``` function.
 - **Pd_field, Pd_moment** field [Oe], magnetic moment data [emu/mol] regfit of which is larger than **minRegFit** .
-- **Pd_field_decrease, Pd_moment_decrease** field decreasing part of **Pd_field, Pd_moment**, including the field turning point
-- **Pd_field_increase, Pd_moment_increase** field increasing part of **Pd_field, Pd_moment**, including the field turning point
+- **Pd_field_decrease, Pd_moment_decrease** field decreasing part of **Pd_field, Pd_moment**
+- **Pd_field_increase, Pd_moment_increase** field increasing part of **Pd_field, Pd_moment**
 - **Pd_fit_increase** line fitting of MH decreasing part
 - **Pd_fit_decrease** line fitting of MH increasing part
 - **Pd_slope** line slope of MH graph, including both decreasing and increasing part
@@ -35,3 +35,10 @@ correctMPMS(input_prefix, folderName, turning_point, output_prefix)
 - **output_prefix[output]** prefix of the output wave name. Wave name of corrected magnetic moment data is **prefix+"moment_increase"** and **prefix+"moment_decrease"**, and that of corrected magnetic field data is **prefix+"field_increase"** and **prefix+"field_decrease"**.
 
 In correction process, magnetic moment is multiplied by **&chi;<sub>Pd</sub>/Pd_slope**, where **&chi;<sub>Pd</sub>** is exact susceptibility of Pd. From http://www.fizika.si/magnetism/MagSusceptibilities.pdf , **&chi;<sub>Pd</sub>**=540&times;10<sup>-6</sup> [cm<sup>3</sup>/mol]. Magnetic field is shifted by **Pd_offset_decrease** or **Pd_offset_increase**.
+
+## Example data
+### Pd slope
+<p><img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/Pd_slope.png" width=600"></p>
+  
+### Pd offset
+<p><img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/Pd_offset.png" width=600"></p>
