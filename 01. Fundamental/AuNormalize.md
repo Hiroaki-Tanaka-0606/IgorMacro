@@ -8,7 +8,7 @@ Normalize the ARPES data using the ARPES spectrum of Au polycrystal
 1. Using ```AuEfCorrect3D``` or ```AuEfCorrect2D```, set the Fermi energy to zero.
 
 ### Note
-Slope of the background is not used. So you probably should not use this parameter in ```EfFitting``` by setting **holdParams="000100"**.
+Slope of the background is not used. So you probably should neglect this parameter in ```EfFitting``` by setting **holdParams="000100"**.
 
 ## Usage
 ```
