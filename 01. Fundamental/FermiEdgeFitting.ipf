@@ -64,7 +64,7 @@ Function EfFitting(waveName, temperature, holdParams, displayFlag)
 	Variable fitRange=conf[1]-conf[0]
 	
 	//get initial value from edgestat
-	EdgeStats/A=5/B=5/F=0.25/P/Q input
+	EdgeStats/A=5/B=5/F=0.25/P/Q/R=[conf[1]-1,conf[0]] input
 	
 	//set initial value
 	Make/O/D/N=6 $"Parameters"
@@ -83,7 +83,7 @@ Function EfFitting(waveName, temperature, holdParams, displayFlag)
 		elseif(numtype(V_EdgeLoc2)==0)
 			param[4]=V_EdgeLoc2*delta+offset
 		else
-			param[4]=V_EdgeLoc2*delta+offset
+			param[4]=V_EdgeLoc3*delta+offset
 		endif
 	else
 		print("EfFitting error: can't find edge.\n")
@@ -94,7 +94,6 @@ Function EfFitting(waveName, temperature, holdParams, displayFlag)
 	else
 		param[5]=delta
 	endif
-	
 	Duplicate/O/R=[conf[0],conf[1]-1] input yTemp
 	
 	FuncFit/H=(holdParams)/Q/W=2/N EfTrialFunc param yTemp

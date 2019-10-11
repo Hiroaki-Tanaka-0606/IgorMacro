@@ -2,6 +2,120 @@
 
 #include "FermiEdgeFitting"
 
+//MCPNormalize2D: normalize intensity in fixed mode
+//Usage
+//inputWave: 2D(E-k) measurement data
+//referenceWave: reference data for correction
+//outputWave: corrected data
+Function MCPNormalize2D(inputWave, referenceWave, outputWave)
+	String inputWave, referenceWave, outputWave
+	Variable threshold
+	Print("[MCPNormalize2D]")
+	Wave/D input=$inputWave
+	Wave/D reference=$referenceWave
+		
+	//energy row information
+	Variable size1=DimSize(input,0) 
+	Variable offset1=DimOffset(input,0)
+	Variable delta1=DimDelta(input,0)
+	//angle1 column information
+	Variable size2=DimSize(input,1)
+	Variable offset2=DimOffset(input,1)
+	Variable delta2=DimDelta(input,1)
+			
+	Variable size3=DimSize(reference,0)
+	Variable size4=DimSize(reference,1)
+	
+	If(size1!=size3 || size2!=size4)
+		Print("Error: sizes of input and reference are different")
+		Print(num2str(size1))
+		abort
+	Endif
+	
+	Make/O/D/N=(size1,size2) $outputWave
+	Wave/D output=$outputWave
+	
+	SetScale/P x offset1, delta1, output
+	SetScale/P y offset2, delta2, output
+
+	Variable i,j
+	For(i=0;i<size1;i+=1)
+		For(j=0;j<size2;j+=1)
+			If(reference[i][j]<0)
+				output[i][j]=0
+			Else
+				output[i][j]=input[i][j]/reference[i][j]
+			Endif
+		Endfor
+	Endfor
+	
+End
+
+//MCPReference: create reference wave for the MCP intensity correction
+//Usage
+//inputWave: 2D(E-k) measurement data
+//threshold: intensity threshold
+//outputWave: normalized intensity data (average intensity is 1)
+// intensity of the position where intensity is less than threshold is set to -1 (negative)
+Function MCPReference(inputWave, threshold, outputWave)
+	String inputWave, outputWave
+	Variable threshold
+	Print("[MCPReference]")
+	Wave/D input=$inputWave
+		
+	//energy row information
+	Variable size1=DimSize(input,0) 
+	Variable offset1=DimOffset(input,0)
+	Variable delta1=DimDelta(input,0)
+	//angle1 column information
+	Variable size2=DimSize(input,1)
+	Variable offset2=DimOffset(input,1)
+	Variable delta2=DimDelta(input,1)
+	
+	Make/O/D/N=(size1,size2) $outputWave
+	Wave/D output=$outputWave
+	
+	SetScale/P x offset1, delta1, output
+	SetScale/P y offset2, delta2, output
+
+	Variable i,j
+	Variable counts=0
+	Variable intensitySum=0
+	For(i=0;i<size1;i+=1)
+		For(j=0;j<size2;j+=1)
+			If(input[i][j]>threshold)
+				counts+=1
+				intensitySum+=input[i][j]
+			Endif
+		Endfor
+	Endfor
+	
+	Variable intensityAverage=intensitySum/counts
+	For(i=0;i<size1;i+=1)
+		For(j=0;j<size2;j+=1)
+			If(input[i][j]>threshold)
+				output[i][j]=input[i][j]/intensityAverage
+			Else
+				output[i][j]=-1
+			Endif
+		Endfor
+	Endfor
+End
+
+//MCPHistogram: create histogram for MCP intensity correction in fixed mode
+//Usage
+//inputWave: 2D(E-k) measurement data
+//buns: number of bins in the histogram
+//outputWave: histogram data
+Function MCPHistogram(inputWave, bins, outputWave)
+	String inputWave, outputWave
+	Variable bins
+	Print("[MCPHistogram]")
+	Wave/D input=$inputWave
+	Make/O/N=(bins) $outputWave
+	Wave/D output=$outputWave
+	Histogram/B=1 input, output
+End
 
 //AuEfCorrect3D: set ef at zero
 //Usage
@@ -154,21 +268,27 @@ Function AuEfCorrect2D(inputWave, efWave, outputWave)
 	
 	Variable i
 	Variable efAverage=0
+	Variable validSize=0
 	For(i=0;i<size2;i+=1)
-		efAverage+=ef[i]
+		if(ef[i]>=0)
+			efAverage+=ef[i]
+			validSize+=1
+		Endif
 	Endfor
-	efAverage/=size2
+	efAverage/=validSize
 	Print "ef average: "+num2str(efAverage)
 	
 	Variable minShift=0 // will be negative
 	Variable maxShift=0
 	For(i=0;i<size2;i+=1)
-		shift[i]=round((efAverage-ef[i])/delta1)
-		if(shift[i]<minShift)
-			minShift=shift[i]
-		Endif
-		if(shift[i]>maxShift)
-			maxShift=shift[i]
+		If(ef[i]>=0)
+			shift[i]=round((efAverage-ef[i])/delta1)
+			if(shift[i]<minShift)
+				minShift=shift[i]
+			Endif
+			if(shift[i]>maxShift)
+				maxShift=shift[i]
+			Endif
 		Endif
 	Endfor
 	
@@ -183,12 +303,16 @@ Function AuEfCorrect2D(inputWave, efWave, outputWave)
 	
 	Variable j
 	For(i=0;i<size2;i+=1)
-		For(j=0;j<newSize1;j+=1)
-			output[j][i]=0
-		Endfor
-		For(j=0;j<size1;j+=1)
-			output[j+shift[i]-minShift][i]=input[j][i]
-		Endfor
+		If(ef[i]>=0)
+			For(j=0;j<newSize1;j+=1)
+				output[j][i]=0
+			Endfor
+			For(j=0;j<size1;j+=1)
+				output[j+shift[i]-minShift][i]=input[j][i]
+			Endfor
+		Else
+			output[][i]=0
+		Endif
 	Endfor
 	
 	KillWaves shift
@@ -405,6 +529,174 @@ Function AuIntensity(inputWave, bgWave, intensityWave)
 	Endfor
 	Variable intensityAverage=intensityTotal/size3
 	intensity[]/=intensityAverage
+End
+
+//AuAnalyze_nearEf: calculate Ef position from ARPES data of Au polycrystal
+//Usage
+//inputWave: wave name of Au ARPES data (input)
+//temperature: measurement tempreature (input)
+//referenceWave: reference wave, by which the position where the intensity comes is determined
+//width1: fitting range [eV]
+// fitting range is [EfApprox-width,EfApprox+width]
+// EfApprox is the position of the heighest decreasing step
+//width2: for finding EfApprox
+// EfApprox is found by EdgeStats in the region [averageEfApprox-width2, averageEfApprox+width2]
+//width3: for valid region
+// edge fitting is conducted if the region [EfApprox-width3, EfApprox+width3] is entirely valid
+//angleSum: actually edge fitting is conducted to the summarized wave in the region [j-angleSum,j+angleSum]
+//energySum: summation in energy direction
+//efWave: wave name of the fermi energy data (output)
+//fwhmWave: wave name of FWHM of fermi edge fitting (output)
+//holdParams: 6-long string, the same as AuAnalyze
+Function AuAnalyze_nearEf(inputWave, temperature, referenceWave, width1, width2, width3, angleSum, energySum, efWave, fwhmWave, holdParams)
+	String inputWave, referenceWave, efWave, fwhmWave, holdParams
+	Variable temperature, width1, width2, width3, angleSum, energySum
+	
+	Print("[AuAnalyze_nearEf]")
+	Wave/D input=$inputWave
+	Wave/D reference=$referenceWave
+	
+	//energy row information
+	Variable size1=DimSize(input,0) 
+	Variable offset1=DimOffset(input,0)
+	Variable delta1=DimDelta(input,0)
+	//angle column information
+	Variable size2=DimSize(input,1)
+	Variable offset2=DimOffset(input,1)
+	Variable delta2=DimDelta(input,1)
+	
+	Make/O/D/N=(size2) $efWave
+	Wave/D ef=$efWave
+	SetScale/P x, offset2, delta2, ef
+	
+	Make/O/D/N=(size2) $fwhmWave
+	Wave/D fwhm=$fwhmWave
+	SetScale/P x, offset2, delta2, fwhm
+	
+	
+	Variable i,j,k,m
+	
+	Make/O/D/N=(size1) average
+	Wave/D average=average
+	average[]=0
+	For(j=0;j<size2;j+=1)
+		average[]+=input[p][j]
+	Endfor
+	Variable averageEfIndex
+	EdgeStats/A=5/B=5/F=0.25/P/Q/R=[size1-1,0] average
+	If(V_flag==0)
+		averageEfIndex=round(V_EdgeLoc2)
+	Elseif(V_flag==1)
+		If(numtype(V_EdgeLoc2)==0)
+			averageEfIndex=V_EdgeLoc2
+		Elseif(numtype(V_EdgeLoc1)==0)
+			averageEfIndex=round(V_EdgeLoc1)
+		Else
+			averageEfIndex=round(V_EdgeLoc3)
+		Endif
+	Else
+		Print("Error: can't find edge from average intensity")
+		abort
+	Endif
+	
+	KillWaves average
+	
+	Variable EfApproxIndex=0
+	Variable width=max(width1,width2)
+	Variable tempStartIndex=averageEfIndex-round(width/delta1)
+	Variable tempEndIndex=averageEfIndex+round(width/delta1)
+	If(tempStartIndex<energySum)
+		tempStartIndex=energySum
+	Endif
+	If(tempEndIndex>=size1-energySum)
+		tempEndIndex=size1-energySum-1
+	Endif
+	Variable tempSize=tempEndIndex-tempStartIndex+1
+	
+	Make/O/D/N=(tempSize) tempSlice
+	Wave/D tempSlice=tempSlice
+	SetScale/P x, (offset1+tempStartIndex*delta1), delta1, tempSlice
+		
+	For(j=0;j<size2;j+=1)
+		If(j==100*floor(j/100))
+			Print("Index "+num2str(j)+" start")
+		Endif
+		tempSlice[]=0
+		For(i=j-angleSum;i<=j+angleSum;i+=1)
+			If(0<=i && i<size2)
+				For(k=-energySum;k<=energySum;k+=1)
+					tempSlice[]+=input[p+tempStartIndex+energySum-k][i]
+				Endfor
+			Endif
+		Endfor
+		//edgeStats: based on tempSlice
+		Variable edgeStatsStartIndex=averageEfIndex-round(width2/delta1)-tempStartIndex
+		Variable edgeStatsEndIndex=averageEfIndex+round(width2/delta1)-tempStartIndex
+		If(edgeStatsStartIndex<0)
+			edgeStatsStartIndex=0
+		Endif
+		If(edgeStatsEndIndex>=tempSize)
+			edgeStatsEndIndex=tempSize-1
+		Endif
+		
+		EdgeStats/A=5/B=5/F=0.25/P/Q/R=[edgeStatsEndIndex,edgeStatsStartIndex] tempSlice
+		If(V_flag==0)
+			//ok
+			EfApproxIndex=round(V_EdgeLoc2)
+		Elseif(V_flag==1)
+			//not bad
+			If(numtype(V_EdgeLoc2)==0)
+				EfApproxIndex=round(V_EdgeLoc2)
+			Elseif(numtype(V_EdgeLoc1)==0)
+				EfApproxIndex=round(V_EdgELoc1)
+			Else
+				EfApproxIndex=round(V_EdgeLoc3)
+			Endif
+		Else
+			//bad (no edge found)
+			ef[j]=-1
+			fwhm[j]=-1
+			continue
+		Endif
+		//flag: based on input or reference
+		Variable flagStartIndex=EfApproxIndex-round(width3/delta1)+tempStartIndex
+		Variable flagEndIndex=EfApproxIndex+round(width3/delta1)+tempStartIndex
+		If(flagStartIndex<0)
+			flagStartIndex=0
+		Endif
+		If(flagEndIndex>=size1)
+			flagEndIndex=size1-1
+		Endif
+		Make/O/D/N=4 $"Config"
+		Wave/D conf=$"Config"
+		Make/O/D/N=6 $"Parameters"
+		Wave/D param=$"Parameters"
+		
+		Variable flag=1
+		For(i=flagStartIndex;i<=flagEndIndex;i+=1)
+			If(reference[i][j]<0)
+				flag=0
+				break
+			Endif
+		Endfor
+		If(flag==0)
+			//[startIndex,endIndex] is not a valid region
+			ef[j]=-1
+			fwhm[j]=-1
+			continue
+		Else
+			//edge fitting
+			conf[0]=EfApproxIndex-round(width1/delta1)
+			conf[1]=EfApproxIndex+round(width1/delta1)
+			conf[2]=0 //default
+			conf[3]=0 //set by function argument
+			EfFitting("tempSlice",temperature,holdParams,0)
+			ef[j]=param[4]
+			fwhm[j]=param[5]
+		Endif
+	Endfor
+	
+	KillWaves tempSlice
 End
 
 //AuAnalyze: calculate background offset, fermi energy from ARPES data of Au polycrystal
