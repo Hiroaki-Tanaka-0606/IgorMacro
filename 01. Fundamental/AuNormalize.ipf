@@ -2,6 +2,60 @@
 
 #include "FermiEdgeFitting"
 
+//MCPNormalize3D: normalize intensity in fixed mode
+//Usage
+//inputWave: 3D(E-k-k) measurement data
+// slices input[][][i] is normalized
+//referenceWave: reference data for correction
+//outputWave: corrected data
+Function MCPNormalize3D(inputWave, referenceWave, outputWave)
+	String inputWave, referenceWave, outputWave
+	Variable threshold
+	Print("[MCPNormalize3D]")
+	Wave/D input=$inputWave
+	Wave/D reference=$referenceWave
+		
+	//energy row information
+	Variable size1=DimSize(input,0) 
+	Variable offset1=DimOffset(input,0)
+	Variable delta1=DimDelta(input,0)
+	//angle1 column information
+	Variable size2=DimSize(input,1)
+	Variable offset2=DimOffset(input,1)
+	Variable delta2=DimDelta(input,1)
+	//angle2 layer information
+	Variable size3=DimSize(input,2)
+	Variable offset3=DimOffset(input,2)
+	Variable delta3=DimDelta(input,2)
+			
+	Variable size4=DimSize(reference,0)
+	Variable size5=DimSize(reference,1)
+	
+	If(size1!=size4 || size2!=size5)
+		Print("Error: sizes of input and reference are different")
+		Print(num2str(size1))
+		abort
+	Endif
+	
+	Make/O/D/N=(size1,size2,size3) $outputWave
+	Wave/D output=$outputWave
+	
+	SetScale/P x offset1, delta1, output
+	SetScale/P y offset2, delta2, output
+	SetScale/P z offset3, delta3, output
+
+	Variable i,j,k
+	For(i=0;i<size1;i+=1)
+		For(j=0;j<size2;j+=1)
+			If(reference[i][j]<0)
+				output[i][j][]=0
+			Else
+				output[i][j][]=input[i][j][r]/reference[i][j]
+			Endif
+		Endfor
+	Endfor
+End
+
 //MCPNormalize2D: normalize intensity in fixed mode
 //Usage
 //inputWave: 2D(E-k) measurement data
@@ -48,7 +102,6 @@ Function MCPNormalize2D(inputWave, referenceWave, outputWave)
 			Endif
 		Endfor
 	Endfor
-	
 End
 
 //MCPReference: create reference wave for the MCP intensity correction
@@ -175,21 +228,27 @@ Function AuEfCorrect3D(inputWave, efWave, outputWave)
 	
 	Variable i
 	Variable efAverage=0
+	Variable validSize=0
 	For(i=0;i<size2;i+=1)
-		efAverage+=ef[i]
+		If(ef[i]>=0)
+			efAverage+=ef[i]
+			validSize+=1
+		Endif
 	Endfor
-	efAverage/=size2
+	efAverage/=validSize
 	Print "ef average: "+num2str(efAverage)
 	
 	Variable minShift=0 // will be negative
 	Variable maxShift=0
 	For(i=0;i<size2;i+=1)
-		shift[i]=round((efAverage-ef[i])/delta1)
-		if(shift[i]<minShift)
-			minShift=shift[i]
-		Endif
-		if(shift[i]>maxShift)
-			maxShift=shift[i]
+		If(ef[i]>=0)
+			shift[i]=round((efAverage-ef[i])/delta1)
+			if(shift[i]<minShift)
+				minShift=shift[i]
+			Endif
+			if(shift[i]>maxShift)
+				maxShift=shift[i]
+			Endif
 		Endif
 	Endfor
 	
@@ -205,14 +264,16 @@ Function AuEfCorrect3D(inputWave, efWave, outputWave)
 	
 	Variable j,k
 	For(i=0;i<size2;i+=1)
-		For(j=0;j<size3;j+=1)
+		If(ef[i]>=0)
 			For(k=0;k<newSize1;k+=1)
-				output[k][i][j]=0
+				output[k][i][]=0
 			Endfor
 			For(k=0;k<size1;k+=1)
-				output[k+shift[i]-minShift][i][j]=input[k][i][j]
+				output[k+shift[i]-minShift][i][]=input[k][i][r]
 			Endfor
-		Endfor
+		Else
+			output[][i][]=0
+		Endif
 	Endfor
 	
 	KillWaves shift
