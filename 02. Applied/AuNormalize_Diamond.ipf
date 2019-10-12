@@ -1,5 +1,6 @@
 #pragma rtGlobals=3		// Use modern global access method and strict wave access.
 #include "AuNormalize"
+#include "FermiEdgeLinearFit"
 
 
 //MCPHistogram_Diamond: create histogram in the current folder
@@ -68,4 +69,77 @@ Function AuAnalyze_Diamond_kz(angleSum,energySum)
 	Wave/D efSlice=$(folderName+"_efSlice")
 	Wave/D fwhmSlice=$(folderName+"_fwhmSlice")
 	KillWaves efSlice, fwhmSlice
+End
+
+//AnalyzeFermiEdge_Diamond: analyze kz dependence of Fermi edge
+Function AnalyzeFermiEdge_Diamond()
+	String folderName=GetDataFolder(0)
+	AnalyzeFermiEdge(folderName+"_ef",folderName+"_slope",folderName+"_section")
+End
+
+//Correct2D_Diamond_kz: correct intensity and Fermi edge of kx dependent waves
+//efWave: Fermi edge name
+//offset: index offset
+//delta: index delta
+// (folderName)_(i) is corrected by efWave[i*delta+offset]
+Function Correct2D_Diamond_kz(efWave,offset,delta)
+	String efWave
+	Variable offset, delta
+	
+	Print("[AuEfCorrect2D_Diamond_kz]")
+	Wave/D ef=$efWave
+	Variable size1=DimSize(ef,1)
+	Variable offset1=DimOffset(ef,1)
+	Variable delta1=DimDelta(ef,1)
+	
+	Make/O/D/N=(size1) tempSlice
+	Wave/D tempSlice=tempSlice
+	SetScale/P x, offset1, delta1, tempSlice
+	
+	String folderName=GetDataFolder(0)
+	Wave/D photon_energy=photon_energy
+	
+	Variable i
+	For(i=0;i<DimSize(photon_energy,0);i+=1)
+		tempSlice[]=ef[i*delta+offset][p]
+		MCPNormalize2D(folderName+"_"+num2str(i),"root:MCP_reference",folderName+"_cor")
+		AuEfCorrect2D(folderName+"_cor","tempSlice",folderName+"_"+num2str(i)+"_corrected")
+	Endfor
+	Wave/D a=$(folderName+"_cor")
+	
+	KillWaves tempSlice,a
+End
+
+//Correct3D_Diamond: correct intensity and Fermi edge of 3D waves
+//Usage
+//efWave: Fermi edge name
+Function Correct3D_Diamond(efWave)
+	String efWave
+	String folderName=GetDataFolder(0)
+	Print("[Correct3D_Diamond]")
+	MCPNormalize3D(folderName,"root:MCP_reference",folderName+"_cor")
+	AuEfCorrect3D(folderName+"_cor",efWave,folderName+"_corrected")
+	Wave/D a=$(folderName+"_cor")
+	
+	KillWaves a
+End
+
+//Correct3D_Diamond_LinearFit: correct intensity and Fermi edge of 3D waves from linear fit
+//Usage
+//AuFolder: folder name of Fermi edge list
+Function Correct3D_Diamond_LinearFit(AuFolder)
+	String AuFolder
+	NVAR photon_energy=single_photon_energy
+	String folderName=GetDataFolder(0)
+	String folderPath=GetDataFolder(1) //include ":" at the end
+	Print(folderPath)
+	Print("[Correct3D_Diamond_LinearFit]")
+	MCPNormalize3D(folderName,"root:MCP_reference",folderName+"_cor")
+	cd AuFolder
+	String auFolderName=GetDataFolder(0)
+	GenerateFermiEdge(auFolderName+"_slope",auFolderName+"_section",photon_energy,folderPath+folderName+"_ef")
+	cd folderPath
+	AuEfCorrect3D(folderName+"_cor",folderName+"_ef",folderName+"_corrected")
+	Wave/D a=$(folderName+"_cor")
+	KillWaves a
 End
