@@ -119,6 +119,12 @@ The rule of **inputWave** is the same as ```AuNormalize3D``` and ```AuNormalize2
 ### Au Intensity spectrum
 <img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/Au_intensity.png" width=400>
 
+### MCP Histogram
+<img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/MCPHistogram.png" width=400>
+
+### MCP Reference
+<img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/MCPReference.png" width=400>
+
 ### Before normalization
 <img src="https://github.com/Hiroaki-Tanaka-0606/IgorMacro/raw/master/00.%20Resources/ARPES_beforeNormalize.png" width=400>
 
