@@ -158,7 +158,7 @@ End
 //MCPHistogram: create histogram for MCP intensity correction in fixed mode
 //Usage
 //inputWave: 2D(E-k) measurement data
-//buns: number of bins in the histogram
+//bins: number of bins in the histogram
 //outputWave: histogram data
 Function MCPHistogram(inputWave, bins, outputWave)
 	String inputWave, outputWave
@@ -690,7 +690,7 @@ Function AuAnalyze_nearEf(inputWave, temperature, referenceWave, width1, width2,
 				Endfor
 			Endif
 		Endfor
-		//edgeStats: based on tempSlice
+		//edgeStats index: based on tempSlice
 		Variable edgeStatsStartIndex=averageEfIndex-round(width2/delta1)-tempStartIndex
 		Variable edgeStatsEndIndex=averageEfIndex+round(width2/delta1)-tempStartIndex
 		If(edgeStatsStartIndex<0)
@@ -719,7 +719,7 @@ Function AuAnalyze_nearEf(inputWave, temperature, referenceWave, width1, width2,
 			fwhm[j]=-1
 			continue
 		Endif
-		//flag: based on input or reference
+		//flag index: based on input or reference
 		Variable flagStartIndex=EfApproxIndex-round(width3/delta1)+tempStartIndex
 		Variable flagEndIndex=EfApproxIndex+round(width3/delta1)+tempStartIndex
 		If(flagStartIndex<0)

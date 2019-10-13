@@ -124,6 +124,22 @@ Function Correct3D_Diamond(efWave)
 	KillWaves a
 End
 
+//Correct3D_Diamond_lowMemory: correct intensity and Fermi edge of 3D waves
+//Usage
+//efWave: Fermi edge name
+Function Correct3D_Diamond_lowMemory(efWave)
+	String efWave
+	String folderName=GetDataFolder(0)
+	Print("[Correct3D_Diamond_lowMemory]")
+	MCPNormalize3D(folderName,"root:MCP_reference",folderName+"_cor")
+	Wave/D b=$(folderName)
+	KillWaves b
+	AuEfCorrect3D(folderName+"_cor",efWave,folderName+"_corrected")
+	Wave/D a=$(folderName+"_cor")
+	
+	KillWaves a
+End
+
 //Correct3D_Diamond_LinearFit: correct intensity and Fermi edge of 3D waves from linear fit
 //Usage
 //AuFolder: folder name of Fermi edge list
