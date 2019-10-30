@@ -19,7 +19,7 @@ Function loadQDFile()
 	//Dialog 2: Select File
 	String fileName
 	Prompt fileName, "File Name", popup, IndexedFile(folderPath, -1, ".dat")
-	DoPrompt "Select .nxs File", fileName
+	DoPrompt "Select .dat File", fileName
 	If(V_flag!=0)
 		//canceled
 		abort
