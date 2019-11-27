@@ -16,10 +16,10 @@ sliceNormalize(inputWave, outputWave)
 ```
 sliceNormalize2D_range(inputWave, startX, endX, startY, endY, outputWave)
 ```
-- **inputWave** wave name of corrected measurement data (k-k) (input)
-- **startX**, **endX** kx range (input)
-- **startY**, **endY** ky range (input)
-- **outputWave** wave name of normalized measurement data (output)
+- **inputWave[input]** wave name of corrected measurement data (k-k)
+- **startX[input]**, **endX[input]** kx range
+- **startY[input]**, **endY[input]** ky range
+- **outputWave[output]** wave name of normalized measurement data
 
 Area of 1D slice input[][i], within the range **[startX, endX]** is calculated for correction.
 If the y value of input[][i] is out of the range **[startY, endY]**, the intensity is kept the same.
@@ -27,9 +27,9 @@ If the y value of input[][i] is out of the range **[startY, endY]**, the intensi
 ```
 sliceNormalize3D_range(inputWave, startE, endE, outputWave)
 ```
-- **inputWave** wave name of measurement data (E-k-k) (input)
-- **startE**, **endE**: energy range (input)
-- **outputWave** wave name of normalized measurement data (output)
+- **inputWave[input]** wave name of measurement data (E-k-k) (input)
+- **startE[input]**, **endE[input]**: energy range (input)
+- **outputWave[output]** wave name of normalized measurement data (output)
 
 Area of 2D slice input[][][i], within the range **[startE, endE]** in the first index is calculated.
 
