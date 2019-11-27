@@ -32,7 +32,7 @@ AuAnalyze_nearEf(inputWave, temperature, referenceWave, width1, width2, width3, 
 - **referenceWave[input]** reference wave by which the position where the intensity comes is determined, usually the same as **inputWave** in ```MCPReference``` function
 - **width1[input]** width for fitting. Fitting width is **[EfApprox-width1, EfApprox+width1]**.
 - **width2[input]** width for finding EfApprox. Approximate Fermi edge position is found by ```EdgeStats``` function in **[averageEfApprox-width2, averageEfApprox+width2]**. **averageEfApprox** is the Fermi edge position of the spectrum summed up along angle dimension.
-- **width3[input]** width for determing the valid region. Edge fitting is conducted if the area **[EfApprox-width3, EfApprox+width3]** is entirely valid in **referenceWave**.
+- **width3[input]** width for determing the valid region. Edge fitting is conducted if the area **[EfApprox-width3, EfApprox+width3]** is entirely valid in **referenceWave**. If **width3** is equal to or less than zero, validation is skipped.
 - **angleSum[input]** the intensity of the angle index **j** is actually the intensity summed up from the angle **j-angleSum** to **j+angleSum**
 - **energySum[input]** the intensity of the energy index **i** is actually the intensity summed up from the angle **i-energySum** to **i*angleSum**
 - **efWave[output]** wave name of the Fermi edge energy data. The Fermi edge of the invalid area (see the description of **width3**) is set to **-1**.

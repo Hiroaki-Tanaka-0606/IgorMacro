@@ -443,8 +443,8 @@ Function AuNormalize3D(inputWave, bgWave, intensityWave, coeff, outputWave)
 
 	
 
-	if(!(size2==size4 && offset2==offset4 && delta2==delta4) || !(size5==size4 && offset5==offset4 && delta5==delta4))
-		Print "Error: some of size, offset, delta of input and bg and intensity are different"
+	if(!(size2==size4) || !(size5==size4))
+		Print "Error: some of size of input and bg and intensity are different"
 		abort
 	Endif
 
@@ -604,6 +604,7 @@ End
 // EfApprox is found by EdgeStats in the region [averageEfApprox-width2, averageEfApprox+width2]
 //width3: for valid region
 // edge fitting is conducted if the region [EfApprox-width3, EfApprox+width3] is entirely valid
+// if width3<=0, the function doesn't check the validity of the region
 //angleSum: actually edge fitting is conducted to the summarized wave in the region [j-angleSum,j+angleSum]
 //energySum: summation in energy direction
 //efWave: wave name of the fermi energy data (output)
@@ -734,12 +735,14 @@ Function AuAnalyze_nearEf(inputWave, temperature, referenceWave, width1, width2,
 		Wave/D param=$"Parameters"
 		
 		Variable flag=1
-		For(i=flagStartIndex;i<=flagEndIndex;i+=1)
-			If(reference[i][j]<0)
-				flag=0
-				break
-			Endif
-		Endfor
+		If(width3>0)
+			For(i=flagStartIndex;i<=flagEndIndex;i+=1)
+				If(reference[i][j]<0)
+					flag=0
+					break
+				Endif
+			Endfor
+		Endif
 		If(flag==0)
 			//[startIndex,endIndex] is not a valid region
 			ef[j]=-1
