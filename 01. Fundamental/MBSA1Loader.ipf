@@ -52,9 +52,19 @@ Function MBSA1_load2D(fileName)
 	// delimited text (tab)
 	// Note0: first column, Note1: second column
 	LoadWave/J/Q/K=2/N=$NoteName/P=folderPath fileName_full
+	If(V_flag!=2)
+		Print("MBSA1_load2D Error: LoadWave failed")
+		cd ::
+		abort
+	Endif
 	// general text (format information rows are neglected)
 	// Matrix0: matrix data
 	LoadWave/Q/G/M/N=$MatrixName/P=folderPath fileName_full
+	If(V_flag!=1)
+		Print("MBSA1_load2D Error: LoadWave failed")
+		cd ::
+		abort
+	Endif
 	
 	Wave/T note0=$(NoteName+"0")
 	Wave/T note1=$(NoteName+"1")
