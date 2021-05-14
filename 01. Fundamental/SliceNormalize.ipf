@@ -162,7 +162,7 @@ End
 
 //sliceNormalize3D_range: modify intensity of each slice so that all slices have the same net intensity
 //Usage
-//inputWave: wave name of corrected measurement data (E-k-k) (input)
+//inputWave: wave name of measurement data (E-k-k) (input)
 //startE, endE: energy range (input)
 //outputWave: wave name of normalized measurement data (output)
 //area of 2D slice input[][][i], within the range [startE, endE] is calculated

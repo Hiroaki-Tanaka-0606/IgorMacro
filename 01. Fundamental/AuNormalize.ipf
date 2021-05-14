@@ -170,6 +170,121 @@ Function MCPHistogram(inputWave, bins, outputWave)
 	Histogram/B=1 input, output
 End
 
+//AuEfCorrect3D_2: set ef at zero, with two-dimensional ef change
+//Usage
+//inputWave: 3D(E-k-k) measurement data (input)
+//efWave: ef data(k-k) (input)
+//outputWave: corrected data (output)
+Function AuEfCorrect3D_2(inputWave, efWave, outputWave)
+	String inputWave, efWave, outputWave
+	
+	Wave/D input=$inputWave
+	Wave/D ef=$efWave
+	
+	Print "[AuEfCorrect3D]"
+	
+	//energy row information
+	Variable size1=DimSize(input,0) 
+	Variable offset1=DimOffset(input,0)
+	Variable delta1=DimDelta(input,0)
+	//angle1 column information
+	Variable size2=DimSize(input,1)
+	Variable offset2=DimOffset(input,1)
+	Variable delta2=DimDelta(input,1)
+	//angle2 layer information
+	Variable size3=DimSize(input,2)
+	Variable offset3=DimOffset(input,2)
+	Variable delta3=DimDelta(input,2)
+	
+	//ef information
+	Variable size4=DimSize(ef,0)
+	Variable offset4=DimOffset(ef,0)
+	Variable delta4=DimDelta(ef,0)
+	Variable size5=DimSize(ef,1)
+	Variable offset5=DimOffset(ef,1)
+	Variable delta5=DimDelta(ef,1)
+	
+	if(!(size2==size4))
+		Print "Error: some of size, offset, delta of input and ef are different"
+		abort
+	Endif
+	
+	//print information
+	Print "Energy row:"
+	Print "Offset: "+num2str(offset1)
+	Print "Delta: "+num2str(delta1)
+	Print "Size: "+num2str(size1)
+	Print "Angle1 column:"
+	Print "Offset: "+num2str(offset2)
+	Print "Delta: "+num2str(delta2)
+	Print "Size: "+num2str(size2)
+	Print "Angle2 layer:"
+	Print "Offset: "+num2str(offset3)
+	Print "Delta: "+num2str(delta3)
+	Print "Size: "+num2str(size3)
+	
+	//offset shift: average of ef & negative index (in case ef is higher than average)
+	Make/O/D/N=(size2,size3) $"tempShift"
+	Wave/D shift=$"tempShift"
+	setScale/P x offset2, delta2, shift
+	setScale/P y offset3, delta3, shift
+	
+	Variable i,j
+	Variable efAverage=0
+	Variable validSize=0
+	For(i=0;i<size2;i+=1)
+		For(j=0;j<size3;j+=1)
+			If(ef[i][j]>=0)
+				efAverage+=ef[i][j]
+				validSize+=1
+			Endif
+		Endfor
+	Endfor
+	efAverage/=validSize
+	Print "ef average: "+num2str(efAverage)
+	
+	Variable minShift=0 // will be negative
+	Variable maxShift=0
+	For(i=0;i<size2;i+=1)
+		For(j=0;j<size3;j+=1)
+			If(ef[i][j]>=0)
+				shift[i][j]=round((efAverage-ef[i][j])/delta1)
+				if(shift[i][j]<minShift)
+					minShift=shift[i][j]
+				Endif
+				if(shift[i][j]>maxShift)
+					maxShift=shift[i][j]
+				Endif
+			Endif
+		Endfor
+	Endfor
+	
+	Print "minShift: "+num2str(minShift)+" maxShift: "+num2str(maxShift)
+	
+	Variable newSize1=size1-minShift+maxShift
+	Make/O/D/N=(newSize1,size2,size3) $outputWave
+	Wave/D output=$outputWave
+	
+	SetScale/P x (offset1-efAverage+minShift*delta1),delta1, output
+	SetScale/P y offset2,delta2,output
+	SetScale/P z offset3,delta3,output
+	
+	Variable k
+	For(i=0;i<size2;i+=1)
+		For(j=0;j<size3;j+=1)
+			output[][i][j]=0
+			If(ef[i][j]>=0)
+				For(k=0;k<size1;k+=1)
+					output[k+shift[i][j]-minShift][i][j]=input[k][i][j]
+				Endfor
+			Endif
+		Endfor
+	Endfor
+	
+	KillWaves shift
+	
+End
+
 //AuEfCorrect3D: set ef at zero
 //Usage
 //inputWave: 3D(E-k-k) measurement data (input)
@@ -564,8 +679,9 @@ Function AuIntensity(inputWave, bgWave, intensityWave)
 	Variable offset3=DimOffset(bg,0)
 	Variable delta3=DimDelta(bg,0)
 	
-	if(!(size2==size3 && offset2==offset3 && delta2==delta3))
-		Print "Error: some of size, offset, delta of input and bg are different"
+	//if(!(size2==size3 && offset2==offset3 && delta2==delta3))
+	if(!(size2==size3))
+		Print "Error: size of input and bg are different"
 		abort
 	Endif
 	
@@ -602,6 +718,7 @@ End
 // EfApprox is the position of the heighest decreasing step
 //width2: for finding EfApprox
 // EfApprox is found by EdgeStats in the region [averageEfApprox-width2, averageEfApprox+width2]
+// if global variable "AuAnalyze_nearEf_EfApprox [eV]" doesn't exist, averageEfApprox is determined by averaging & EdgeStats (whole range in energy)
 //width3: for valid region
 // edge fitting is conducted if the region [EfApprox-width3, EfApprox+width3] is entirely valid
 // if width3<=0, the function doesn't check the validity of the region
@@ -644,24 +761,33 @@ Function AuAnalyze_nearEf(inputWave, temperature, referenceWave, width1, width2,
 	For(j=0;j<size2;j+=1)
 		average[]+=input[p][j]
 	Endfor
-	Variable averageEfIndex
-	EdgeStats/A=5/B=5/F=0.25/P/Q/R=[size1-1,0] average
-	If(V_flag==0)
-		averageEfIndex=round(V_EdgeLoc2)
-	Elseif(V_flag==1)
-		If(numtype(V_EdgeLoc2)==0)
-			averageEfIndex=V_EdgeLoc2
-		Elseif(numtype(V_EdgeLoc1)==0)
-			averageEfIndex=round(V_EdgeLoc1)
+	Variable averageEfIndex=-1
+	NVAR averageEfApprox_NVAR=AuAnalyze_nearEf_EfApprox
+	If(NVAR_Exists(averageEfApprox_NVAR))
+		averageEfIndex=round((averageEfApprox_NVAR-offset1)/delta1)
+	endif
+	if(averageEfIndex<0 || averageEfIndex>=size1)
+		Print("global variable AuAnalyze_nearEf_averageEfApprox is invalid")
+		
+		EdgeStats/A=5/B=5/F=0.25/P/Q/R=[size1-1,0] average
+		If(V_flag==0)
+			averageEfIndex=round(V_EdgeLoc2)
+		Elseif(V_flag==1)
+			If(numtype(V_EdgeLoc2)==0)
+				averageEfIndex=V_EdgeLoc2
+			Elseif(numtype(V_EdgeLoc1)==0)
+				averageEfIndex=round(V_EdgeLoc1)
+			Else
+				averageEfIndex=round(V_EdgeLoc3)
+			Endif
 		Else
-			averageEfIndex=round(V_EdgeLoc3)
+			Print("Error: can't find edge from average intensity")
+			abort
 		Endif
-	Else
-		Print("Error: can't find edge from average intensity")
-		abort
-	Endif
+	endif
 	
 	KillWaves average
+	//Print(num2str(averageEfIndex))
 	
 	Variable EfApproxIndex=0
 	Variable width=max(width1,width2)

@@ -24,7 +24,7 @@ Function AuAnalyze_Diamond(angleSum,energySum)
 	String folderName=GetDataFolder(0)
 	NVAR temperature=temperature
 	MCPNormalize2D(folderName,"root:MCP_reference",folderName+"_cor")
-	AuAnalyze_nearEf(folderName+"_cor",temperature,"root:MCP_reference",0.1,0.2,0.5,angleSum,energySum,folderName+"_ef",folderName+"_fwhm","000000")
+	AuAnalyze_nearEf(folderName+"_cor",temperature,"root:MCP_reference",0.05,0.2,0.5,angleSum,energySum,folderName+"_ef",folderName+"_fwhm","000000")
 	AuEfCorrect2D(folderName+"_cor",folderName+"_ef",folderName+"_corrected")
 	
 	Wave/D a=$(folderName+"_cor")
@@ -77,7 +77,7 @@ Function AnalyzeFermiEdge_Diamond()
 	AnalyzeFermiEdge(folderName+"_ef",folderName+"_slope",folderName+"_section")
 End
 
-//Correct2D_Diamond_kz: correct intensity and Fermi edge of kx dependent waves
+//Correct2D_Diamond_kz: correct intensity and Fermi edge of kz dependent waves
 //efWave: Fermi edge name
 //offset: index offset
 //delta: index delta
@@ -157,5 +157,70 @@ Function Correct3D_Diamond_LinearFit(AuFolder)
 	cd folderPath
 	AuEfCorrect3D(folderName+"_cor",folderName+"_ef",folderName+"_corrected")
 	Wave/D a=$(folderName+"_cor")
+	KillWaves a
+End
+
+//Correct2D_Diamond: correct intensity and Fermi edge
+//efWave: Fermi edge name
+//offset: index offset
+//delta: index delta
+// (folderName)_(i) is corrected by efWave[i*delta+offset]
+Function Correct2D_Diamond(efWave)
+	String efWave
+	
+	Print("[AuEfCorrect2D_Diamond]")
+		
+	String folderName=GetDataFolder(0)
+	
+	MCPNormalize2D(folderName,"root:MCP_reference",folderName+"_cor")
+	AuEfCorrect2D(folderName+"_cor",efWave,folderName+"_corrected")
+	Wave/D a=$(folderName+"_cor")
+	KillWaves a
+End
+
+Function Correct2D_Diamond_linearFit(AuFolder)
+	String AuFolder
+	NVAR photon_energy=single_photon_energy
+	String folderName=GetDataFolder(0)
+	String folderPath=GetDataFolder(1) //include ":" at the end
+	Print(folderPath)
+	Print("[Correct2D_Diamond_LinearFit]")
+	MCPNormalize2D(folderName,"root:MCP_reference",folderName+"_cor")
+	cd AuFolder
+	String auFolderName=GetDataFolder(0)
+	GenerateFermiEdge(auFolderName+"_slope",auFolderName+"_section",photon_energy,folderPath+folderName+"_ef")
+	cd folderPath
+	AuEfCorrect2D(folderName+"_cor",folderName+"_ef",folderName+"_corrected")
+	Wave/D a=$(folderName+"_cor")
+	KillWaves a
+
+End
+
+
+//Correct2D_Diamond_kz: correct intensity and Fermi edge obtained by linear fitting
+Function Correct2D_Diamond_kz_linearfit(aufolder)
+	String aufolder
+	
+	Print("[AuEfCorrect2D_Diamond_kz_linearfit]")
+	
+	
+	String folderName=GetDataFolder(0)
+	String folderPath=GetDataFolder(1)
+	Wave/D photon_energy=photon_energy
+	
+	cd AuFolder
+	String auFolderName=getDatafolder(0)
+	cd folderPath
+	
+	Variable i
+	For(i=0;i<DimSize(photon_energy,0);i+=1)
+		cd AuFolder
+		generatefermiedge(aufoldername+"_slope",aufolderName+"_section",photon_energy[i],folderPath+folderName+"_"+num2str(i)+"_ef")
+		cd folderpath			
+		MCPNormalize2D(folderName+"_"+num2str(i),"root:MCP_reference",folderName+"_cor")
+		AuEfCorrect2D(folderName+"_cor",folderName+"_"+num2str(i)+"_ef",folderName+"_"+num2str(i)+"_corrected")
+	Endfor
+	Wave/D a=$(folderName+"_cor")
+	
 	KillWaves a
 End
