@@ -1,13 +1,13 @@
 #pragma rtGlobals=3		// Use modern global access method and strict wave access.
 
 //add menuitem
-Menu "hdf5Loader_PSF"
-	"Load .hdf5 File", loadHDF5File_PSF()
-	"Load .hdf5 Folder", loadHDF5Folder_PSF()
+Menu "hdf5Loader_PAD"
+	"Load .hdf5 File", loadHDF5File_PAD()
+	"Load .hdf5 Folder", loadHDF5Folder_PAD()
 End
 
 //Load .hdf5 File
-Function loadHDF5File_PSF()
+Function loadHDF5File_PAD()
 	Variable flag
 	//Dialog 1: Select Data Folder
 	NewPath/O/Q/M="Select Data Folder" folderPath
@@ -29,11 +29,11 @@ Function loadHDF5File_PSF()
 	PathInfo folderPath
 	String/G folderPath=S_Path
 	
-	convertHDF5File_PSF(fileName)
+	convertHDF5File_PAD(fileName)
 End
 
 //Load all .hdf5 File in the folder
-Function loadHDF5Folder_PSF()
+Function loadHDF5Folder_PAD()
 	Variable flag
 	//Dialog 1: Select Data Folder
 	NewPath/O/Q/M="Select Data Folder" folderPath
@@ -52,12 +52,12 @@ Function loadHDF5Folder_PSF()
 	Variable i
 	For(i=0;i<num;i+=1)
 		String fileName=StringFromList(i, hdf5FilesList)
-		convertHDF5File_PSF(fileName)
+		convertHDF5File_PAD(fileName)
 	Endfor
 End
 
 //convert .hdf5 file to global variables, waves
-Function convertHDF5File_PSF(fileName)
+Function convertHDF5File_PAD(fileName)
 	String fileName
 	Variable au_ang=0.529177
 	
