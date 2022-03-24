@@ -137,5 +137,6 @@ Function convertHDF5File_PAD(fileName)
 	endif	
 	killWaves tempCube, tempAtt
 
+	HDF5CloseFile fileID
 
 End
