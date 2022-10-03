@@ -30,6 +30,8 @@ Function EfCorrect2D_self_dialog(inputWave, width,temperature, holdParams, outpu
 	EfCorrect2D_self(inputWave,-1,width,temperature,holdParams,outputWave)
 	Wave/D temp=tempSlice
 	Display temp
+	DoUpdate
+	
 	String windowName=S_name
 	
 	Variable threshold
